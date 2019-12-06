@@ -2,51 +2,57 @@
   <div>
     <el-container>
       <el-aside width="auto" ref="aside">
+        <div @click="Collapse">
+          <i class="el-icon-s-fold" ref="i"></i>
+        </div>
+        <!-- default-active="1-4-1" 当前激活的菜单的index -->
         <el-menu
-          default-active="1-4-1"
+          default-active="/home/goods"
           class="el-menu-vertical-demo"
           @open="handleOpen"
           @close="handleClose"
           :collapse="isCollapse"
           router
         >
-          <!-- <el-submenu index="1">
-          <template slot="title">-->
-          <el-menu-item index="/home/user"  >
-            <i class="el-icon-location"></i>
+          <el-menu-item index="/home/user">
+            <i class="el-icon-user-solid"></i>
             <span slot="title">用户信息</span>
           </el-menu-item>
-          <!-- </template>
+          <el-submenu index="/home/goods">
+            <template slot="title">
+              <i class="el-icon-goods"></i>
+              <span slot="title">商品管理</span>
+            </template>
             <el-menu-item-group>
-              <span slot="title">分组一</span>
+              <span slot="title">生活用品</span>
               <el-menu-item index="1-1">选项1</el-menu-item>
               <el-menu-item index="1-2">选项2</el-menu-item>
-          </el-menu-item-group>-->
-          <!-- <el-menu-item-group title="分组2">
+            </el-menu-item-group>
+            <el-menu-item-group title="分组2">
               <el-menu-item index="1-3">选项3</el-menu-item>
-          </el-menu-item-group>-->
-          <!-- <el-submenu index="1-4">
+            </el-menu-item-group>
+            <el-submenu index="1-4">
               <span slot="title">选项4</span>
               <el-menu-item index="1-4-1">选项1</el-menu-item>
-          </el-submenu>-->
-          <!-- </el-submenu> -->
-          <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <i class="el-icon-document"></i>
-            <span slot="title">导航三</span>
+            </el-submenu>
+          </el-submenu>
+          <!-- disabled  设置不能点击-->
+          <el-menu-item index="3">
+            <i class="el-icon-s-order"></i>
+            <span slot="title">订单管理</span>
           </el-menu-item>
           <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span slot="title">导航四</span>
+            <i class="el-icon-data-line"></i>
+            <span slot="title">数据试图</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>
         <el-header ref="header">
-          <div class="el-icon-menu" @click="Collapse"></div>
+          <p>后台管理系统</p>
+          <div>
+            <span>数据用户名</span>
+          </div>
         </el-header>
         <el-main ref="content">
           <router-view />
@@ -73,6 +79,10 @@ export default {
     },
     Collapse() {
       this.isCollapse = !this.isCollapse;
+      this.$refs.i.className =
+        this.$refs.i.className == "el-icon-s-fold"
+          ? "el-icon-s-unfold"
+          : "el-icon-s-fold";
     }
   },
   mounted() {
@@ -86,16 +96,31 @@ export default {
 </script>
 
 <style lang="less">
+.el-aside {
+  > div {
+    height: 40px;
+    > i {
+      height: 40px;
+      line-height: 40px;
+      display: block;
+    }
+  }
+}
 .el-header {
   text-align: initial !important;
   top: 0;
-  div {
-    height: 20px;
-    width: 20px;
+  display: flex;
+  justify-content: space-between;
+  p {
+    height: 60px;
+    width: 200px;
     font-size: 30px;
-    margin-top: 20px;
-    margin-left: -20px;
     display: block;
+    line-height: 60px;
+  }
+  div {
+    height: 60px;
+    line-height: 60px;
   }
 }
 .el-footer {
