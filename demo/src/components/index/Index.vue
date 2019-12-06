@@ -57,7 +57,6 @@
         <el-main ref="content">
           <router-view />
         </el-main>
-        <el-footer ref="footer">Footer</el-footer>
       </el-container>
     </el-container>
   </div>
@@ -88,9 +87,8 @@ export default {
   mounted() {
     let heightW = document.documentElement.clientHeight;
     let headerH = parseInt(this.$refs.header.$el.style.height);
-    let footerH = parseInt(this.$refs.footer.$el.style.height);
     this.$refs.aside.$el.style.height = heightW + "px";
-    this.$refs.content.$el.style.minHeight = heightW - headerH - headerH + "px";
+    this.$refs.content.$el.style.minHeight = heightW - headerH + "px";
   }
 };
 </script>
@@ -111,6 +109,7 @@ export default {
   top: 0;
   display: flex;
   justify-content: space-between;
+  z-index: 99;
   p {
     height: 60px;
     width: 200px;

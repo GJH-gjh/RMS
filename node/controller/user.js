@@ -6,7 +6,7 @@ const model = require("../modul/user")
 
 const user = new express.Router();
 /**
- * {"username":"张三","age":12,"sex":1,"birthday":"2019-1-1","site":"江苏省南京市"}
+ * {"username":"张三","age":"12","sex":1,"birthday":"2019-1-1","site":"江苏省南京市"}
  * 添加功能
  */
 
@@ -57,6 +57,28 @@ user.get("/get", (req, res) => {
                 }
                 res.send(json)
             }
+        }
+    })
+
+})
+/**
+ * 查找所有用户信息
+ */
+user.get("/getall", (req, res) => {
+    model.find({}, (error, doc) => {
+        if (error) {
+            let json = {
+                ok: false,
+                msg: "查找失败"
+            }
+            res.send(json)
+        } else {
+            let json = {
+                ok: false,
+                msg: "查找成功",
+                result: doc
+            }
+            res.send(json)
         }
     })
 

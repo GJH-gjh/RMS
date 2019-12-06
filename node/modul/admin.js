@@ -9,5 +9,4 @@ const admins = new mongoose.Schema({
 const model = mongoose.model("admins",admins);
 module.exports = model;
 
-// {"username":"张三","age":12,"sex":1,"birthday":"2019-1-1","site":"江苏省南京市"}
-//{"username":"GJH","password":123123}
+// {"username":"GJH","password":123123}
