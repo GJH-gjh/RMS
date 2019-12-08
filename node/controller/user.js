@@ -2,6 +2,7 @@ require("../public/connect")
 //链接数据库
 const express = require("express")
 const model = require("../modul/user")
+var ObjectId = require('mongodb').ObjectID
 //导入数据库的数据的格式
 
 const user = new express.Router();
@@ -34,7 +35,7 @@ user.post("/add", (req, res) => {
  * 查找功能
  */
 user.get("/get", (req, res) => {
-    let { username } = req.body;
+    let { username } = req.query;
     model.find({ username: username }, (error, doc) => {
         if (error) {
             let json = {
@@ -51,7 +52,7 @@ user.get("/get", (req, res) => {
                 res.send(json)
             } else {
                 let json = {
-                    ok: false,
+                    ok: true,
                     msg: "查找成功",
                     result: doc
                 }
@@ -74,7 +75,7 @@ user.get("/getall", (req, res) => {
             res.send(json)
         } else {
             let json = {
-                ok: false,
+                ok: true,
                 msg: "查找成功",
                 result: doc
             }
@@ -87,8 +88,9 @@ user.get("/getall", (req, res) => {
  * 更新功能
  */
 user.post("/set", (req, res) => {
-    let { _id } = req.body;
-    model.update({ _id: _id }, req.body, (error, doc) => {
+    let { _id } = req.query;
+	//ObjectId  引入mongodb里面对应的方法
+    model.update({ _id: ObjectId(_id) }, req.body, (error, doc) => {
         if (error) {
             let json = {
                 ok: false,
@@ -97,7 +99,7 @@ user.post("/set", (req, res) => {
             res.send(json)
         } else {
             let json = {
-                ok: false,
+                ok: true,
                 msg: "更新成功",
                 result: doc
             }
@@ -110,8 +112,9 @@ user.post("/set", (req, res) => {
  * 删除功能
  */
 user.get("/del", (req, res) => {
-    let { _id } = req.body;
-    model.remove({ _id: _id }, (error, doc) => {
+	//get请求用req.query 接参数
+    let {_id} = req.query;
+    model.deleteOne({ _id: ObjectId(_id) }, (error, doc) => {
         if (error) {
             let json = {
                 ok: false,
@@ -120,7 +123,7 @@ user.get("/del", (req, res) => {
             res.send(json)
         } else {
             let json = {
-                ok: false,
+                ok: true,
                 msg: "删除成功",
                 result: doc
             }

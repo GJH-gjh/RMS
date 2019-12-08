@@ -76,7 +76,7 @@
       </el-table-column>
       <el-table-column label="生日" width="180" sortable align="center">
         <template slot-scope="scope">
-          <span style="margin-left: -10px">{{ scope.row.birthday }}</span>
+          <span style="margin-left: -10px">{{ scope.row.birthday | date}}</span>
         </template>
       </el-table-column>
       <el-table-column label="地址" width="300" sortable align="left">
@@ -97,7 +97,12 @@
         <el-button @click="selectionAll()">全选</el-button>
         <el-button @click="delSelection(tableData)" disabled>批量删除</el-button>
       </div>
-      <el-pagination background layout="prev, pager, next" :page-count=" tableData | setLength"></el-pagination>
+      <el-pagination
+        @current-change="handleCurrentChange"
+        background
+        layout="prev, pager, next"
+        :page-count=" datas | setLength"
+      ></el-pagination>
     </div>
   </div>
 </template>
@@ -109,6 +114,9 @@ import qs from "qs";
 export default {
   data() {
     return {
+      //临时存要编辑的内容
+      row: {},
+      startIndex: 0,
       switchGJH: true,
       options: siteJson,
       loading: false,
@@ -122,8 +130,8 @@ export default {
         age: "",
         birthday: "",
         sex: "",
-        city: [],
-        site: ""
+        city: []
+        // site: ""
       },
       rules: {
         username: [
@@ -152,35 +160,7 @@ export default {
         city: [{ required: true, message: "请填写地址", trigger: "blur" }]
       },
 
-      data: [
-        {
-          birthday: 1577030400000,
-          username: "王小虎",
-          value: "江苏省",
-          label: "南京市",
-          site: "",
-          age: 12,
-          sex: 0
-        },
-        {
-          birthday: 1577030400000,
-          username: "王小虎",
-          value: "江苏省",
-          label: "南京市",
-          site: "",
-          age: 12,
-          sex: 0
-        },
-        {
-          birthday: 1577030400000,
-          username: "王小虎",
-          value: "江苏省",
-          label: "南京市",
-          site: "",
-          age: 12,
-          sex: 0
-        }
-      ]
+      datas: []
     };
   },
   filters: {
@@ -189,77 +169,105 @@ export default {
     },
     setLength(v) {
       return Math.ceil(v.length / 10);
+    },
+    date(v) {
+      return new Date(v).toLocaleDateString();
     }
   },
   methods: {
+    handleCurrentChange(val) {
+      this.startIndex = (val - 1) * 10;
+    },
     //添加按钮
     add(formName) {
-      console.log(this.$refs);
       this.centerDialogVisible = true;
       this.switchGJH = true;
-      this.ruleForm = {
-        username: "",
-        age: "",
-        birthday: "",
-        sex: "",
-        city: [],
-        site: ""
-      };
-      this.$nextTick(()=>{
-         this.$refs[formName].resetFields();
-      })
+      this.$nextTick(() => {
+        this.$refs[formName].resetFields();
+      });
     },
     //上传的数据做格式处理
     setUpData(data) {
-      data.sex = Number(data.sex);
       data.value = data.city[0];
       data.label = data.city[1];
       data.birthday = data.birthday.valueOf();
-      console.log(typeof data.birthday);
-      return data;
+      data.city = null;
+      // return data;
     },
-    //添加数据
+    //添加提交数据
     submitForm(formName, bool) {
       if (bool) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            //对sex进行处理
-            // this.centerDialogVisible = false;
-            // age: 12
-            // birthday: Mon Dec 23 2019 00:00:00 GMT+0800 (中国标准时间)
-            // sex: "1"
-            // city: Array(2)
-            // username: "qwe"
             this.loading = true;
-            let arr = this.setUpData(this.ruleForm);
-            console.log(arr);
+            this.setUpData(this.ruleForm);
             this.$axios({
               method: "post",
               url: "/api/user/add",
-              data: qs.stringify(arr)
+              data: qs.stringify(this.ruleForm)
             }).then(res => {
-              console.log(res);
-              this.loading = false;
-              this.centerDialogVisible = false;
+              if (res.data.ok) {
+                this.upData();
+                this.$message("上传成功");
+                this.loading = false;
+                this.centerDialogVisible = false;
+              } else {
+                this.$message("上传失败");
+                this.loading = false;
+                this.centerDialogVisible = true;
+              }
             });
           } else {
-            console.log(this.ruleForm);
             return false;
           }
         });
       } else {
-        console.log(1);
+        this.$refs[formName].validate(valid => {
+          if (valid) {
+            this.loading = true;
+            this.setUpData(this.ruleForm);
+            this.ruleForm._id = this.row._id;
+            console.log(this.ruleForm);
+            this.$axios({
+              method: "post",
+              url: "/api/user/set",
+              data: qs.stringify(this.ruleForm)
+            }).then(res => {
+              if (res.data.ok) {
+                this.upData();
+                this.$message("修改成功");
+                this.loading = false;
+                this.centerDialogVisible = false;
+              } else {
+                this.$message("修改失败");
+                this.loading = false;
+                this.centerDialogVisible = true;
+              }
+            });
+          } else {
+            return false;
+          }
+        });
       }
+    },
+    //更新全部数据
+    upData() {
+      this.$axios({
+        url: "/api/user/getall"
+      }).then(res => {
+        this.datas = res.data.result;
+        this.cutArray();
+      });
     },
     //重置表单
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs.ruleForm.resetFields();
     },
 
     // indexMethod(index) {
     //   return index * 2;
     // },
-    //全选删除
+    //全选删除 没写
     select(selection, row) {
       let arr = [];
       selection.map(val => {
@@ -278,36 +286,72 @@ export default {
     selectionAll() {
       this.$refs.multipleTable.toggleAllSelection();
     },
-    //批量删除
+    //批量删除  没写
     delSelection(rows) {
       console.log(rows);
     },
     //编辑
     handleEdit(index, row) {
-      row.sex = String(row.sex);
-      this.ruleForm.sex = String(row.sex);
-      this.ruleForm.city = [row.value, row.label];
-      this.ruleForm.birthday = new Date(row.birthday);
-      this.ruleForm.username = row.username;
-      this.ruleForm.site = row.site;
-      this.ruleForm.age = row.age;
       this.centerDialogVisible = true;
-      this.switchGJH = false;
+      this.$nextTick(() => {
+        this.$refs.ruleForm.resetFields();
+        this.row = row;
+        row.sex = String(row.sex);
+        let arr = {};
+        arr.sex = String(row.sex);
+        arr.city = [row.value, row.label];
+        arr.birthday = new Date(row.birthday);
+        arr.username = row.username;
+        arr.age = row.age;
+        this.ruleForm = arr;
+        this.switchGJH = false;
+      });
     },
     //删除
     handleDelete(index, row) {
-      console.log(index, row);
+      let { _id } = row;
+      this.$axios({
+        url: "/api/user/del",
+        params: { _id }
+      }).then(res => {
+        if (res.data.ok) {
+          this.upData();
+          this.$message({
+            message: "删除成功",
+            type: "success"
+          });
+        } else {
+          this.$message.error("删除失败");
+        }
+      });
     },
     //切割数组
-    cutArray(arr, start, sum) {
-      return arr.slice(start, sum);
+    cutArray() {
+      if (this.datas.length < this.startIndex + 10) {
+        this.tableData = this.datas.slice(this.startIndex);
+      } else {
+        this.tableData = this.datas.slice(
+          this.startIndex,
+          10 + this.startIndex
+        );
+      }
     }
   },
   mounted() {
-    this.tableData = this.cutArray(this.data, 0, 10);
+    this.$axios({
+      url: "/api/user/getall"
+    }).then(res => {
+      this.datas = res.data.result;
+      this.cutArray();
+    });
   },
   watch: {
-    data: {}
+    datas() {
+      this.cutArray();
+    },
+    startIndex() {
+      this.cutArray();
+    }
   }
 };
 </script>
