@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import User from '@/components/content/User'
 import Index from '@/components/index/Index'
-import Longin from '@/components/login/Longin'
+import Login from '@/components/login/Login'
 
 Vue.use(Router)
 
-export default new Router({
+const  router = new Router({
   routes: [
     {
       path: '/home',
@@ -16,15 +16,26 @@ export default new Router({
         path: 'user',
         name: 'User',
         component: User
-      },]
+      },{
+        path:'/',
+        redirect:"/home/user"
+      }]
     },{
-      path: '/longin',
-      name: 'Longin',
-      component: Longin
+      path: '/login',
+      name: 'Login',
+      component: Login
     },{
       path:'*',
       redirect:"/home"
-      
-    }
+    },
   ]
 })
+router.beforeEach((to,from,next)=>{
+    if(to.path === "/login") return next();
+    const tokenStr = sessionStorage.getItem("token");
+    if(!tokenStr) return next("/login");
+    next();
+
+})
+
+export default router

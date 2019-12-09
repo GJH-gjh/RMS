@@ -10,7 +10,7 @@ const admin = new express.Router();
  * 添加功能
  */
 
-admin.get("/login", (req, res) => {
+admin.post("/login", (req, res) => {
     let {username,password} = req.body;
     console.log(username)
     model.find({ username: username },{username :1,password :1,_id :0},(error, doc) => {
@@ -38,7 +38,8 @@ admin.get("/login", (req, res) => {
                 }else if(doc[0].password  === password){
                     let json = {
                         ok: true,
-                        msg: "登陆成功"
+                        msg: "登陆成功",
+						token:"GJHgjh123123",
                     }
                     res.send(json)
                 }

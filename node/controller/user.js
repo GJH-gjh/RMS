@@ -88,7 +88,7 @@ user.get("/getall", (req, res) => {
  * 更新功能
  */
 user.post("/set", (req, res) => {
-    let { _id } = req.query;
+    let { _id } = req.body;
 	//ObjectId  引入mongodb里面对应的方法
     model.update({ _id: ObjectId(_id) }, req.body, (error, doc) => {
         if (error) {

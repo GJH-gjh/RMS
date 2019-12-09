@@ -48,11 +48,15 @@
         </el-menu>
       </el-aside>
       <el-container>
-        <el-header ref="header">
+        <el-header ref="header" style=" position: relative;">
           <p>后台管理系统</p>
-          <div>
-            <span>数据用户名</span>
-          </div>
+          <el-popover placement="bottom" width="80" trigger="hover" id="box">
+              <div id="box1">
+                  <span>设置</span>
+                  <span @click="quit">退出</span>
+              </div>
+            <el-button slot="reference" id="but">{{name}}</el-button>
+          </el-popover>
         </el-header>
         <el-main ref="content">
           <router-view />
@@ -66,10 +70,16 @@
 export default {
   data() {
     return {
+      falg: true,
+      name: "GJH",
       isCollapse: false
     };
   },
   methods: {
+    quit(){
+      sessionStorage.clear();
+      this.$router.push("/login")
+    },
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
     },
@@ -89,11 +99,39 @@ export default {
     let headerH = parseInt(this.$refs.header.$el.style.height);
     this.$refs.aside.$el.style.height = heightW + "px";
     this.$refs.content.$el.style.minHeight = heightW - headerH + "px";
+    this.name = sessionStorage.getItem("name")
   }
 };
 </script>
 
 <style lang="less">
+.el-popover{
+  min-width: 0px;
+  padding: 0
+}
+#but {
+  background-color: #b3c0d1;
+  border: none;
+  margin-top: 10px;
+}
+#box1{
+  width: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  span{
+    line-height: 20px;
+    cursor: pointer;
+    width: 100%;
+    text-align:center;
+    height: 30px;
+    font-size: 16px;
+
+  }
+  span:hover{
+    background-color: #b3c0d1;
+  }
+}
 .el-aside {
   > div {
     height: 40px;
@@ -117,7 +155,7 @@ export default {
     display: block;
     line-height: 60px;
   }
-  div {
+  > div {
     height: 60px;
     line-height: 60px;
   }

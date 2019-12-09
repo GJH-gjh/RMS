@@ -7,7 +7,7 @@
       width="50%"
       center
       v-loading="loading"
-      element-loading-text="上传数据中"
+      :element-loading-text="text"
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
       <el-form
@@ -52,34 +52,51 @@
         <el-button type="primary" @click="submitForm('ruleForm',switchGJH)">提 交</el-button>
       </span>
     </el-dialog>
-    <el-button type="text" @click="add('ruleForm')">添加</el-button>
+    <el-row>
+      <el-col :span="4">
+        <el-input v-model="find" placeholder="请输入内容" @keyup.native="onKeydown"></el-input>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" @click="onFind">搜索</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" @click="add('ruleForm')">添加</el-button>
+      </el-col>
+    </el-row>
     <!-- 显示的用户信息 -->
-    <el-table :data="tableData" style="width: 100%" ref="multipleTable" stripe @select="select">
+    <el-table
+      :data="tableData"
+      style="width: 100%"
+      ref="multipleTable"
+      stripe
+      @select="select"
+      
+    >
       <!-- 全选和单选 -->
       <el-table-column type="selection" width="55"></el-table-column>
       <!--序号-->
       <el-table-column type="index" label="序号" width="60" align="center"></el-table-column>
-      <el-table-column label="名字" width="100" sortable align="center">
+      <el-table-column label="名字" width="100"  align="center">
         <template slot-scope="scope">
           <span style="margin-left: -10px">{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="性别" width="100" sortable align="center">
+      <el-table-column label="性别" width="100" sortable align="center" prop="sex">
         <template slot-scope="scope">
           <span style="margin-left: -10px">{{ scope.row.sex | sex}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="年龄" width="100" sortable align="center">
+      <el-table-column label="年龄" width="100" sortable align="center" prop="age">
         <template slot-scope="scope">
           <span style="margin-left: -10px">{{ scope.row.age }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="生日" width="180" sortable align="center">
+      <el-table-column label="生日" width="180" sortable align="center" prop="birthday">
         <template slot-scope="scope">
           <span style="margin-left: -10px">{{ scope.row.birthday | date}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址" width="300" sortable align="left">
+      <el-table-column label="地址" width="300" sortable align="left" prop="value">
         <template slot-scope="scope">
           <span style="margin-left: -10px">{{ scope.row.value }}{{ scope.row.label}}</span>
         </template>
@@ -114,6 +131,8 @@ import qs from "qs";
 export default {
   data() {
     return {
+      text: "上传数据中",
+      find: "",
       //临时存要编辑的内容
       row: {},
       startIndex: 0,
@@ -175,6 +194,35 @@ export default {
     }
   },
   methods: {
+    onKeydown() {
+      let username = this.find;
+      if (username === "") {
+        this.upData();
+      }
+    },
+    onFind() {
+      let username = this.find;
+      this.loading = true;
+      this.text = "查找数据中";
+      if (username === "") {
+        this.upData();
+      } else {
+        this.$axios({
+          url: "/api/user/get",
+          params: { username }
+        }).then(res => {
+          if (res.data.ok) {
+            this.$message("查找成功");
+            this.loading = false;
+            this.tableData = res.data.result;
+          } else {
+            this.$message.error("查找失败");
+            this.loading = false;
+          }
+        });
+      }
+    },
+    //分页页码
     handleCurrentChange(val) {
       this.startIndex = (val - 1) * 10;
     },
@@ -200,6 +248,7 @@ export default {
         this.$refs[formName].validate(valid => {
           if (valid) {
             this.loading = true;
+            this.text = "上传数据中";
             this.setUpData(this.ruleForm);
             this.$axios({
               method: "post",
@@ -225,6 +274,7 @@ export default {
         this.$refs[formName].validate(valid => {
           if (valid) {
             this.loading = true;
+            this.text = "更新数据中";
             this.setUpData(this.ruleForm);
             this.ruleForm._id = this.row._id;
             console.log(this.ruleForm);
@@ -357,6 +407,12 @@ export default {
 </script>
 
 <style lang="less" >
+.el-row {
+  margin-bottom: 5px;
+  .el-col {
+    margin-right: 5px;
+  }
+}
 .fun {
   margin-top: 10px;
   display: flex;
