@@ -87,7 +87,7 @@ user.get("/getall", (req, res) => {
 /**
  * 更新功能
  */
-user.post("/set", (req, res) => {
+user.put("/set", (req, res) => {
     let { _id } = req.body;
 	//ObjectId  引入mongodb里面对应的方法
     model.update({ _id: ObjectId(_id) }, req.body, (error, doc) => {
@@ -111,8 +111,9 @@ user.post("/set", (req, res) => {
 /**
  * 删除功能
  */
-user.get("/del", (req, res) => {
-	//get请求用req.query 接参数
+user.delete("/del", (req, res) => {
+    //get请求用req.query 接参数
+    console.log(res);
     let {_id} = req.query;
     model.deleteOne({ _id: ObjectId(_id) }, (error, doc) => {
         if (error) {

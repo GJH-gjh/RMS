@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import User from '@/components/content/User'
 import Index from '@/components/index/Index'
 import Login from '@/components/login/Login'
+import datav from "@/components/datav/Datav"
 
 Vue.use(Router)
 
@@ -10,7 +11,6 @@ const  router = new Router({
   routes: [
     {
       path: '/home',
-      name: 'Index',
       component: Index,
       children:[{
         path: 'user',
@@ -19,6 +19,10 @@ const  router = new Router({
       },{
         path:'/',
         redirect:"/home/user"
+      },{
+        path:"datav",
+        name: 'datav',
+        component: datav
       }]
     },{
       path: '/login',

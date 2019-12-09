@@ -70,7 +70,6 @@
       ref="multipleTable"
       stripe
       @select="select"
-      
     >
       <!-- 全选和单选 -->
       <el-table-column type="selection" width="55"></el-table-column>
@@ -277,9 +276,8 @@ export default {
             this.text = "更新数据中";
             this.setUpData(this.ruleForm);
             this.ruleForm._id = this.row._id;
-            console.log(this.ruleForm);
             this.$axios({
-              method: "post",
+              method: "put",
               url: "/api/user/set",
               data: qs.stringify(this.ruleForm)
             }).then(res => {
@@ -361,6 +359,7 @@ export default {
     handleDelete(index, row) {
       let { _id } = row;
       this.$axios({
+        method:"delete",
         url: "/api/user/del",
         params: { _id }
       }).then(res => {

@@ -12,7 +12,6 @@ const admin = new express.Router();
 
 admin.post("/login", (req, res) => {
     let {username,password} = req.body;
-    console.log(username)
     model.find({ username: username },{username :1,password :1,_id :0},(error, doc) => {
         if (error) {
             let json = {

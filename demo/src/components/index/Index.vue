@@ -41,7 +41,7 @@
             <i class="el-icon-s-order"></i>
             <span slot="title">订单管理</span>
           </el-menu-item>
-          <el-menu-item index="4">
+          <el-menu-item index="/home/datav">
             <i class="el-icon-data-line"></i>
             <span slot="title">数据试图</span>
           </el-menu-item>
