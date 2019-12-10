@@ -2,7 +2,7 @@
   "name": "demo",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "GJH <GJH@GJH.com>",
+  "author": "GJH",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -15,6 +15,8 @@
     "element-ui": "^2.13.0",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
+    "swiper": "^5.2.0",
+    "vant": "^2.2.13",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -23,6 +25,7 @@
     "babel-core": "^6.22.1",
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^7.1.1",
+    "babel-plugin-import": "^1.12.2",
     "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-plugin-transform-runtime": "^6.22.0",
     "babel-plugin-transform-vue-jsx": "^3.5.0",
@@ -51,8 +54,8 @@
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",
-    "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-dev-server": "^3.1.11",
+    "webpack-bundle-analyzer": "^2.9.0",
+    "webpack-dev-server": "^2.9.1",
     "webpack-merge": "^4.1.0"
   },
   "engines": {
